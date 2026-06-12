@@ -1,0 +1,14 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment variables (Crucial to ignore so you don't leak secrets)
+.env
+
+# ADK Local Artifacts and state
+.adk/
+.adk\artifacts/
+
+graphs/  # Ignore generated graph images

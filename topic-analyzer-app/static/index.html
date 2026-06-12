@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reel Topic Analyzer — Kalinga</title>
+<script src="xlsx.full.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Big+Shoulders+Display:wght@700;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{--indigo:#1C2B4A;--indigo-d:#141F38;--indigo-l:#283A5E;--bone:#EDE0C2;--bone-d:#D6C6A2;
+    --geru:#A93B26;--geru-d:#802A1A;--haldi:#D98E1F;--teal:#14635C;--pink:#C2497B;--copper:#B07A33;
+    --kajal:#14110C;--sankha:#F7F0DF;--disp:'Young Serif',Georgia,serif;--punch:'Big Shoulders Display',sans-serif;--mono:'IBM Plex Mono',monospace;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--indigo);color:var(--bone);font-family:var(--mono);font-size:15px;line-height:1.55;
+    background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.05) 0 1px,transparent 1px 6px),repeating-linear-gradient(90deg,rgba(255,255,255,.022) 0 1px,transparent 1px 6px);min-height:100vh;}
+  .ikat{height:34px;background:var(--indigo-d);border-bottom:3px solid var(--bone);}
+  header{max-width:920px;margin:0 auto;padding:26px 22px 6px;}
+  h1{font-family:var(--disp);font-size:clamp(24px,4.5vw,40px);text-shadow:3px 3px 0 var(--geru-d);}
+  h1 .h{color:var(--haldi);}
+  .sub{font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--copper);margin-top:6px;}
+  .sub .m{color:var(--haldi);}
+  main{max-width:920px;margin:0 auto;padding:16px 22px 80px;}
+  .panel{background:var(--indigo-l);border:2px dashed var(--bone-d);border-radius:8px;padding:24px;margin-bottom:20px;}
+  .panel h2{font-family:var(--disp);font-size:22px;margin-bottom:4px;text-shadow:2px 2px 0 var(--geru-d);}
+  .lead{color:var(--bone-d);font-size:13px;margin-bottom:16px;}
+  .drop{border:2px dashed var(--copper);border-radius:10px;padding:38px 20px;text-align:center;color:var(--bone-d);font-size:14px;cursor:pointer;transition:.15s;}
+  .drop.over{background:var(--indigo-d);border-color:var(--haldi);color:var(--haldi);}
+  .drop b{color:var(--haldi);}
+  .filebar{font-size:12px;color:#8FBF9A;margin-top:12px;min-height:18px;}
+  .ctrls{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-top:16px;}
+  label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--copper);}
+  select,input[type=date]{background:var(--indigo-d);color:var(--sankha);border:1.5px solid var(--copper);border-radius:5px;padding:7px 9px;font-family:var(--mono);font-size:13px;color-scheme:dark;}
+  .btn{font-family:var(--punch);font-weight:800;letter-spacing:.05em;font-size:18px;text-transform:uppercase;color:var(--kajal);background:var(--haldi);border:2px dashed var(--kajal);border-radius:6px;padding:9px 20px;cursor:pointer;transform:rotate(-1.2deg);box-shadow:4px 4px 0 var(--geru-d);}
+  .btn:hover{transform:rotate(-1.2deg) translate(-1px,-1px);}
+  .btn:active{transform:rotate(-1.2deg) translate(2px,2px);box-shadow:1px 1px 0 var(--geru-d);}
+  .btn.sm{font-size:13px;padding:6px 13px;box-shadow:3px 3px 0 var(--geru-d);}
+  .btn.teal{background:var(--teal);color:var(--sankha);transform:rotate(1deg);}
+  .btn:disabled{opacity:.45;cursor:wait;}
+  .stat-row{display:flex;gap:22px;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--bone-d);}
+  .stat-row b{color:var(--haldi);font-size:18px;font-family:var(--punch);}
+  .topic{border:1.5px solid var(--copper);border-radius:8px;background:var(--indigo-d);padding:15px 16px;margin-bottom:12px;}
+  .topic .th{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .topic .rank{font-family:var(--punch);font-weight:800;font-size:26px;color:var(--haldi);min-width:34px;}
+  .topic .name{font-family:var(--disp);font-size:20px;color:var(--sankha);}
+  .topic .badges{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;}
+  .bdg{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:20px;border:1px solid var(--copper);color:var(--bone-d);}
+  .bdg.cre{background:var(--teal);color:var(--sankha);border-color:var(--kajal);}
+  .bdg.proven{background:var(--haldi);color:var(--kajal);border-color:var(--kajal);font-weight:600;}
+  .why{font-size:12.5px;color:var(--bone-d);margin-top:7px;font-style:italic;}
+  .ex{font-size:12px;color:var(--bone-d);margin-top:6px;}
+  .ex a{color:var(--teal);text-decoration:none;} .ex a:hover{color:var(--haldi);text-decoration:underline;}
+  .hidden{display:none;}
+  .note{border-left:4px solid var(--teal);padding:9px 13px;background:var(--indigo-d);font-size:12px;color:var(--bone-d);border-radius:0 4px 4px 0;margin-top:14px;}
+  .note b{color:var(--haldi);}
+  .modeflag{display:inline-block;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:20px;margin-left:8px;}
+  .modeflag.ai{background:var(--teal);color:var(--sankha);}
+  .modeflag.local{background:var(--geru);color:var(--sankha);}
+  .spin{display:inline-block;width:13px;height:13px;border:2px solid var(--bone-d);border-top-color:var(--haldi);border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px;margin-right:6px;}
+  @keyframes sp{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<div class="ikat"><svg width="100%" height="34" preserveAspectRatio="none" viewBox="0 0 1200 34" aria-hidden="true">
+  <defs><pattern id="ik" width="60" height="34" patternUnits="userSpaceOnUse">
+    <polygon points="30,4 50,30 10,30" fill="#A93B26"/><polygon points="0,4 14,30 -14,30" fill="#D98E1F"/>
+    <polygon points="60,4 74,30 46,30" fill="#EDE0C2"/><circle cx="30" cy="30" r="2" fill="#F7F0DF" opacity=".8"/>
+  </pattern></defs><rect width="1200" height="34" fill="#141F38"/><rect width="1200" height="34" fill="url(#ik)" opacity=".9"/></svg></div>
+<header>
+  <h1>REEL TOPIC <span class="h">ANALYZER.</span></h1>
+  <div class="sub">drop gridrank excels · AI clusters what's working · backend: <span class="m" id="prov">…</span></div>
+</header>
+<main>
+  <section class="panel">
+    <h2>1. Drop your GridRank Excel files</h2>
+    <p class="lead">Add as many <b>gridrank_*.xlsx</b> exports as you like. They merge automatically.</p>
+    <div class="drop" id="drop">⬇ <b>drag &amp; drop</b> .xlsx files here, or click to choose</div>
+    <input type="file" id="fileInput" accept=".xlsx,.xls" multiple class="hidden">
+    <div class="filebar" id="filebar"></div>
+    <div class="ctrls hidden" id="ctrls">
+      <div><label>Only posts after</label><br><input type="date" id="dateFrom"></div>
+      <div><label>How many topics</label><br>
+        <select id="topN"><option>5</option><option>8</option><option selected>10</option><option>12</option></select></div>
+      <div><label>Method</label><br>
+        <select id="method">
+          <option value="ai" selected>AI clustering (handles drift)</option>
+          <option value="local">Local keywords only (offline)</option>
+        </select></div>
+      <button class="btn" id="goBtn">Find Top Topics.</button>
+    </div>
+    <div class="status" id="status" style="margin-top:12px;font-size:12.5px;color:var(--haldi);min-height:18px;"></div>
+  </section>
+
+  <section class="panel hidden" id="results">
+    <h2>Top topics <span class="modeflag" id="modeflag"></span></h2>
+    <div class="stat-row" id="statRow"></div>
+    <div class="note" id="basisNote"></div>
+    <div id="topicList" style="margin-top:16px;"></div>
+    <div class="ctrls" style="margin-top:18px;">
+      <button class="btn teal sm" id="copyBtn">copy as text</button>
+      <button class="btn sm" id="dlBtn">download report .md</button>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ---------------- local keyword baseline (always works, offline) ---------------- */
+var STOP=new Set(("a an the and or but if then to of in on at for with from by your you my me we us our this that these those is are was were be been being have has had do does did will would can could should may might must i it its he she they them his her as so just get got make made how why what when where who which not no yes new now then than too very more most much many out up down off over under again once here there all any some such own same other into about you'll you're i'm we're they're don't can't won't using use used try tried see watch link bio reel reels video videos post posts follow like comment share viral trending check thing things best top free vs ft feat via lol omg wow really feel know need want should every year today actually literally").split(/\s+/).filter(Boolean));
+var KEEP=new Set(["ai","gpt","llm","app","api","seo","ui","ux","pc","vr","ar","3d","io","n8n"]);
+var clean=s=>String(s||"").toLowerCase().replace(/https?:\/\/\S+/g," ").replace(/[#@]\w+/g," ").replace(/[^a-z0-9'\s-]/g," ").replace(/\s+/g," ").trim();
+var stem=w=>w.length>4&&w.endsWith("s")&&!w.endsWith("ss")?w.slice(0,-1):w;
+var tok=s=>clean(s).split(" ").map(stem).filter(w=>w&&!STOP.has(w)&&(w.length>=4||KEEP.has(w))&&!/^\d+$/.test(w));
+function localTopics(set,n){
+  var totalW=set.reduce((a,v)=>a+v.weight,0)||1, terms={};
+  set.forEach(v=>{var t=tok(v.caption),g=new Set();t.forEach(x=>g.add(x));for(var i=0;i<t.length-1;i++)g.add(t[i]+" "+t[i+1]);
+    g.forEach(x=>{var o=terms[x]||(terms[x]={reach:0,count:0,cr:new Set(),ex:[]});o.reach+=v.weight;o.count++;o.cr.add(v.creator);if(o.ex.length<3)o.ex.push(v);});});
+  var arr=Object.keys(terms).map(k=>{var o=terms[k];var c=1+0.6*(o.cr.size-1);return{topic:k,words:k.split(" "),reach:o.reach,count:o.count,creators:o.cr.size,score:(o.reach/totalW*100)*c,ex:o.ex};});
+  arr=arr.filter(t=>t.count>=2);arr.sort((a,b)=>b.score-a.score);
+  var out=[];arr.forEach(t=>{var d=false;for(var o of out){var a=t.words.every(w=>o.words.includes(w)),b=o.words.every(w=>t.words.includes(w));if((a||b)&&t.reach<=o.reach*1.15){d=true;break;}}if(!d)out.push(t);});
+  return out.slice(0,n).map(t=>({topic:t.topic,why:"",creators:t.creators,reels:t.count,reach:Math.round(t.reach),example:t.ex[0]}));
+}
+
+/* ---------------- xlsx parsing ---------------- */
+var videos=[], fileNames=[];
+function parseWB(wb,fname){
+  wb.SheetNames.forEach(function(sn){
+    var rows=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,blankrows:false});
+    var creator="",hdr=-1,col={};
+    for(var i=0;i<rows.length;i++){var r=rows[i]||[];var j=r.map(x=>String(x||"").toLowerCase());
+      if(r[0]==="Creator"&&r[1])creator=String(r[1]).trim();
+      if(j.indexOf("rank")>-1&&j.indexOf("caption")>-1){hdr=i;j.forEach((h,idx)=>col[h.trim()]=idx);break;}}
+    if(hdr<0)return;
+    if(!creator){var m=(fname||"").match(/gridrank_([a-z0-9_.-]+?)_/i);creator=m?m[1]:(fname||"creator");}
+    for(var k=hdr+1;k<rows.length;k++){var r=rows[k];if(!r||!r.length)continue;var cap=r[col["caption"]];if(!cap)continue;
+      videos.push({creator:creator,caption:String(cap),views:+r[col["views"]]||0,likes:+r[col["likes"]]||0,comments:+r[col["comments"]]||0,heat:+r[col["heat"]]||0,posted:String(r[col["posted"]]||""),link:r[col["link"]]||""});}
+  });
+}
+function readFiles(files){
+  var arr=[...files].filter(f=>/\.xlsx?$/i.test(f.name)); if(!arr.length)return;
+  var done=0;
+  arr.forEach(function(f){fileNames.push(f.name);var rd=new FileReader();
+    rd.onload=e=>{try{parseWB(XLSX.read(new Uint8Array(e.target.result),{type:"array"}),f.name);}catch(err){console.error(err);}if(++done===arr.length)afterLoad();};
+    rd.readAsArrayBuffer(f);});
+}
+function afterLoad(){
+  var cr=new Set(videos.map(v=>v.creator));
+  document.getElementById("filebar").textContent="Loaded "+fileNames.length+" file(s) · "+videos.length+" videos · "+cr.size+" creator(s)";
+  document.getElementById("ctrls").classList.remove("hidden");
+}
+
+/* ---------------- run ---------------- */
+function filteredSet(){
+  var fv=document.getElementById("dateFrom").value, from=fv?new Date(fv):null;
+  var set=videos.filter(v=>{if(from&&v.posted){var d=new Date(v.posted);if(!isNaN(d)&&d<from)return false;}return true;});
+  var anyViews=set.some(v=>v.views>0), anyLikes=set.some(v=>v.likes>0);
+  var basis=anyViews?"views":"likes";
+  set.forEach(v=>v.weight=basis==="views"?(v.views||v.likes||0):(anyLikes?v.likes:v.heat));
+  return {set:set, basis:basis};
+}
+var lastReport=null;
+
+document.getElementById("goBtn").addEventListener("click",async function(){
+  var fs=filteredSet(); if(!fs.set.length){setStatus("No videos in that range.","err");return;}
+  var n=+document.getElementById("topN").value;
+  var method=document.getElementById("method").value;
+  var btn=this; btn.disabled=true;
+
+  // always compute the local baseline first (instant, offline safety net)
+  var local=localTopics(fs.set,n);
+
+  if(method==="local"){
+    render(local, fs, "local", null); btn.disabled=false; return;
+  }
+
+  setStatus('<span class="spin"></span>Asking AI to cluster topics (handles drift & synonyms)…');
+  try{
+    var payload={videos:fs.set.map(v=>({caption:v.caption,creator:v.creator,weight:v.weight})),basis:fs.basis,n:n};
+    var r=await fetch("/api/cluster",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+    var d=await r.json();
+    if(!r.ok||!d.topics){ throw new Error(d.error||"AI unavailable"); }
+    // attach example video objects by index
+    var topics=d.topics.map(t=>{
+      var ex=(typeof t.example_index==="number" && fs.set[t.example_index])?fs.set[t.example_index]:null;
+      return {topic:t.topic,why:t.why||"",creators:t.creators||0,reels:t.reels||0,
+        reach:t["total_"+fs.basis]||t.total||0,example:ex};
+    });
+    render(topics, fs, "ai", d.model);
+    setStatus("Done — clustered by "+d.model+(d.tried&&d.tried.length?" (after "+d.tried.length+" fallback hop(s))":""),"ok");
+  }catch(err){
+    // graceful fallback to local — the tool never just breaks
+    render(local, fs, "local", null);
+    setStatus("AI unavailable ("+err.message+") — showed local keyword result instead.","err");
+  }
+  btn.disabled=false;
+});
+
+function setStatus(html,cls){var e=document.getElementById("status");e.innerHTML=html;e.style.color=cls==="err"?"#E08070":cls==="ok"?"#8FBF9A":"var(--haldi)";}
+function fmtN(n){n=Math.round(n||0);if(n>=1e6)return(n/1e6).toFixed(1).replace(/\.0$/,"")+"M";if(n>=1e3)return(n/1e3).toFixed(1).replace(/\.0$/,"")+"K";return""+n;}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");}
+
+function render(topics, fs, mode, model){
+  document.getElementById("results").classList.remove("hidden");
+  var flag=document.getElementById("modeflag");
+  flag.textContent = mode==="ai" ? "AI clustered" : "local keywords";
+  flag.className="modeflag "+(mode==="ai"?"ai":"local");
+  var cr=new Set(fs.set.map(v=>v.creator));
+  document.getElementById("statRow").innerHTML=
+    "<div><b>"+fs.set.length+"</b><br>videos</div><div><b>"+cr.size+"</b><br>creators</div>"+
+    "<div><b>"+topics.length+"</b><br>topics</div><div><b>"+fmtN(fs.set.reduce((a,v)=>a+v.weight,0))+"</b><br>total "+fs.basis+"</div>";
+  document.getElementById("basisNote").innerHTML = mode==="ai"
+    ? "<b>AI clustering:</b> topics grouped by meaning, so synonyms and evolving phrasings (content drift) collapse into one real theme. Cross-creator themes ranked higher."
+    : "<b>Local keyword mode:</b> fast offline grouping by exact words/phrases. Good baseline; turn on AI clustering to merge synonyms and handle drift.";
+
+  document.getElementById("topicList").innerHTML = topics.map(function(t,i){
+    var proven=(t.creators||0)>=2, ex=t.example;
+    return '<div class="topic"><div class="th"><span class="rank">'+(i+1)+'</span>'+
+      '<span class="name">'+esc(t.topic)+'</span><span class="badges">'+
+      (proven?'<span class="bdg proven">★ proven · '+t.creators+' creators</span>':'<span class="bdg cre">'+(t.creators||1)+' creator</span>')+
+      '<span class="bdg">'+(t.reels||0)+' reels</span><span class="bdg">'+fmtN(t.reach)+' '+fs.basis+'</span></span></div>'+
+      (t.why?'<div class="why">“'+esc(t.why)+'”</div>':'')+
+      (ex?'<div class="ex">e.g. '+(ex.link?'<a href="'+ex.link+'" target="_blank">':'')+'"'+esc(ex.caption)+'"'+(ex.link?'</a>':'')+'</div>':'')+
+    '</div>';
+  }).join("");
+  lastReport={topics:topics, basis:fs.basis, mode:mode, model:model};
+}
+
+document.getElementById("copyBtn").addEventListener("click",function(){
+  if(!lastReport)return; var r=lastReport;
+  var txt="TOP REEL TOPICS ("+(r.mode==="ai"?"AI clustered via "+r.model:"local keywords")+", ranked by "+r.basis+")\n\n"+
+    r.topics.map((t,i)=>(i+1)+". "+t.topic+(t.why?" — "+t.why:"")+"\n   "+(t.creators||1)+" creators · "+(t.reels||0)+" reels · "+fmtN(t.reach)+" "+r.basis+(t.example?'\n   e.g. "'+t.example.caption+'"':"")).join("\n\n");
+  navigator.clipboard.writeText(txt); var b=this; b.textContent="copied ✓"; setTimeout(()=>b.textContent="copy as text",1400);
+});
+document.getElementById("dlBtn").addEventListener("click",function(){
+  if(!lastReport)return; var r=lastReport;
+  var md="# Reel Topic Report\n\n_"+(r.mode==="ai"?"AI clustered via "+r.model:"local keywords")+", ranked by "+r.basis+"_\n\n"+
+    r.topics.map((t,i)=>"## "+(i+1)+". "+t.topic+"\n"+(t.why?"_"+t.why+"_\n\n":"")+"- "+(t.creators||1)+" creators · "+(t.reels||0)+" reels · "+fmtN(t.reach)+" "+r.basis+(t.example?'\n- Example: "'+t.example.caption+'"'+(t.example.link?" ("+t.example.link+")":""):"")).join("\n\n");
+  var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([md],{type:"text/markdown"}));a.download="reel-topic-report.md";a.click();
+});
+
+/* drop wiring + config */
+var drop=document.getElementById("drop"), fi=document.getElementById("fileInput");
+drop.addEventListener("click",()=>fi.click());
+drop.addEventListener("dragover",e=>{e.preventDefault();drop.classList.add("over");});
+drop.addEventListener("dragleave",()=>drop.classList.remove("over"));
+drop.addEventListener("drop",e=>{e.preventDefault();drop.classList.remove("over");readFiles(e.dataTransfer.files);});
+fi.addEventListener("change",()=>readFiles(fi.files));
+(async()=>{try{var c=await fetch("/api/config").then(r=>r.json());
+  document.getElementById("prov").textContent=c.providers.length?c.default:"no key in .env";
+  if(!c.providers.length){document.getElementById("method").value="local";}
+}catch(e){document.getElementById("prov").textContent="server off";}})();
+</script>
+</body>
+</html>

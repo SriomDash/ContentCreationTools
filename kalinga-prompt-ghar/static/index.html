@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalinga Prompt Ghar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Big+Shoulders+Display:wght@700;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --indigo:#1C2B4A; --indigo-d:#141F38; --indigo-l:#283A5E;
+    --bone:#EDE0C2; --bone-d:#D6C6A2;
+    --geru:#A93B26; --geru-d:#802A1A;
+    --haldi:#D98E1F; --teal:#14635C; --pink:#C2497B;
+    --copper:#B07A33; --kajal:#14110C; --sankha:#F7F0DF;
+    --disp:'Young Serif', Georgia, serif;
+    --punch:'Big Shoulders Display','Arial Narrow',sans-serif;
+    --mono:'IBM Plex Mono', ui-monospace, monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--indigo);color:var(--bone);font-family:var(--mono);font-size:15px;line-height:1.55;
+    background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.05) 0 1px,transparent 1px 6px),
+      repeating-linear-gradient(90deg,rgba(255,255,255,.022) 0 1px,transparent 1px 6px);min-height:100vh;}
+  .ikat{height:34px;background:var(--indigo-d);border-bottom:3px solid var(--bone);}
+  header{max-width:980px;margin:0 auto;padding:28px 22px 8px;}
+  h1{font-family:var(--disp);font-size:clamp(26px,4.5vw,42px);text-shadow:3px 3px 0 var(--geru-d);}
+  h1 .h{color:var(--haldi);}
+  .sub{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--copper);margin-top:6px;}
+  .sub .proj{color:var(--haldi);}
+  main{max-width:980px;margin:0 auto;padding:18px 22px 80px;}
+  .rail{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0 26px;}
+  .rail button{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+    background:transparent;color:var(--bone-d);border:1.5px dashed var(--copper);padding:7px 13px;cursor:pointer;border-radius:3px;}
+  .rail button.on{background:var(--haldi);color:var(--kajal);border-style:solid;border-color:var(--kajal);
+    transform:rotate(-1.2deg);font-weight:600;}
+  .rail button:disabled{opacity:.35;cursor:not-allowed;}
+  .panel{background:var(--indigo-l);border:2px dashed var(--bone-d);border-radius:8px;padding:26px 24px;margin-bottom:22px;}
+  .panel h2{font-family:var(--disp);font-size:24px;margin-bottom:4px;text-shadow:2px 2px 0 var(--geru-d);}
+  .panel .lead{color:var(--bone-d);font-size:13px;margin-bottom:18px;}
+  label{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--copper);margin:14px 0 6px;}
+  input[type=text],textarea,select{width:100%;background:var(--indigo-d);color:var(--sankha);
+    border:1.5px solid var(--copper);border-radius:4px;padding:10px 12px;font-family:var(--mono);font-size:14px;}
+  textarea{resize:vertical;min-height:84px;}
+  input:focus,textarea:focus,select:focus,button:focus-visible{outline:2px solid var(--haldi);outline-offset:2px;}
+  .btn{display:inline-block;font-family:var(--punch);font-weight:800;letter-spacing:.06em;font-size:19px;
+    text-transform:uppercase;color:var(--kajal);background:var(--haldi);border:2px dashed var(--kajal);
+    border-radius:6px;padding:10px 22px 9px;cursor:pointer;transform:rotate(-1.4deg);
+    box-shadow:4px 4px 0 var(--geru-d);transition:transform .08s;}
+  .btn:hover{transform:rotate(-1.4deg) translate(-1px,-1px);box-shadow:5px 5px 0 var(--geru-d);}
+  .btn:active{transform:rotate(-1.4deg) translate(2px,2px);box-shadow:1px 1px 0 var(--geru-d);}
+  .btn.teal{background:var(--teal);color:var(--sankha);transform:rotate(1.1deg);}
+  .btn.bone{background:var(--bone);transform:rotate(.8deg);}
+  .btn.sm{font-size:14px;padding:6px 14px;box-shadow:3px 3px 0 var(--geru-d);}
+  .btn:disabled{opacity:.45;cursor:wait;}
+  .row-actions{margin-top:20px;display:flex;gap:14px;flex-wrap:wrap;align-items:center;}
+  .tag{display:inline-block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    border:1.5px dashed var(--bone-d);padding:3px 9px;border-radius:3px;color:var(--bone-d);margin-right:6px;}
+  .tag.mela{background:var(--geru);color:var(--sankha);border-color:var(--kajal);transform:rotate(-1deg);}
+  .tag.katha{background:var(--bone);color:var(--kajal);border-color:var(--kajal);transform:rotate(1deg);}
+  .tag.chinha{background:var(--teal);color:var(--sankha);border-color:var(--kajal);transform:rotate(-1deg);}
+  .status{font-size:12px;margin-top:12px;color:var(--haldi);min-height:18px;}
+  .status.err{color:#E08070;} .status.ok{color:#8FBF9A;}
+  .urlrow{display:flex;gap:10px;margin-bottom:10px;align-items:center;}
+  .urlrow input{flex:1;} .urlrow .st{font-size:11px;width:90px;text-align:right;color:var(--bone-d);}
+  .slide-row{border:1.5px solid var(--copper);border-radius:6px;background:var(--indigo-d);padding:16px;margin-bottom:14px;}
+  .slide-row .head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .slide-row .num{font-family:var(--punch);font-weight:800;font-size:22px;color:var(--haldi);}
+  .slide-row .title{font-family:var(--disp);font-size:18px;color:var(--sankha);}
+  .slide-row .brief{margin-top:8px;color:var(--bone-d);font-size:13px;white-space:pre-wrap;}
+  .slide-row.editing .brief,.slide-row.editing .title{display:none;}
+  .slide-row .editbox{display:none;margin-top:8px;}
+  .slide-row.editing .editbox{display:block;}
+  .count-wrap{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;}
+  .count-wrap button{font-family:var(--punch);font-weight:800;font-size:22px;width:54px;height:54px;
+    background:var(--indigo-d);color:var(--bone);border:1.5px dashed var(--copper);border-radius:6px;cursor:pointer;}
+  .count-wrap button.on{background:var(--geru);color:var(--sankha);border-style:solid;border-color:var(--kajal);
+    transform:rotate(-2deg);box-shadow:3px 3px 0 var(--kajal);}
+  .pcard{border:2px dashed var(--bone-d);border-radius:8px;background:var(--indigo-d);padding:18px;margin-bottom:18px;}
+  .pcard .ph{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+  .pcard .pt{font-family:var(--disp);font-size:18px;}
+  .pcard textarea{min-height:170px;font-size:12.5px;line-height:1.6;color:var(--sankha);}
+  .hint{border-left:4px solid var(--teal);padding:10px 14px;background:var(--indigo-d);font-size:12.5px;
+    color:var(--bone-d);margin:14px 0;border-radius:0 4px 4px 0;}
+  .hint b{color:var(--haldi);font-weight:600;}
+  .projchip{display:inline-block;margin:4px 6px 0 0;padding:6px 12px;border:1.5px dashed var(--copper);
+    border-radius:4px;color:var(--bone);cursor:pointer;font-size:12px;background:var(--indigo-d);}
+  .projchip:hover{background:var(--teal);color:var(--sankha);}
+  .drop{border:2px dashed var(--copper);border-radius:8px;padding:22px;text-align:center;color:var(--bone-d);
+    font-size:13px;margin-top:8px;cursor:pointer;}
+  .drop.over{background:var(--indigo-d);border-color:var(--haldi);color:var(--haldi);}
+  .photo-list{font-size:12px;color:#8FBF9A;margin-top:8px;}
+  .hidden{display:none;}
+  .found-row{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;margin-bottom:8px;
+    background:var(--indigo-d);border:1.5px solid var(--copper);border-radius:7px;cursor:pointer;}
+  .found-row input{margin-top:3px;flex:none;width:16px;height:16px;accent-color:var(--haldi);}
+  .found-meta{display:flex;flex-direction:column;min-width:0;}
+  .found-meta a{color:var(--sankha);font-size:14px;text-decoration:none;font-weight:600;}
+  .found-meta a:hover{color:var(--haldi);}
+  .found-snip{font-size:12px;color:var(--bone-d);margin-top:2px;}
+  .found-url{font-size:11px;color:var(--copper);margin-top:2px;word-break:break-all;}
+</style>
+</head>
+<body>
+
+<div class="ikat">
+  <svg width="100%" height="34" preserveAspectRatio="none" viewBox="0 0 1200 34" aria-hidden="true">
+    <defs><pattern id="ik" width="60" height="34" patternUnits="userSpaceOnUse">
+      <polygon points="30,4 50,30 10,30" fill="#A93B26"/>
+      <polygon points="0,4 14,30 -14,30" fill="#D98E1F"/>
+      <polygon points="60,4 74,30 46,30" fill="#EDE0C2"/>
+      <circle cx="30" cy="30" r="2" fill="#F7F0DF" opacity=".8"/>
+    </pattern></defs>
+    <rect width="1200" height="34" fill="#141F38"/>
+    <rect width="1200" height="34" fill="url(#ik)" opacity=".9"/>
+  </svg>
+</div>
+
+<header>
+  <h1>KALINGA <span class="h">PROMPT GHAR.</span></h1>
+  <div class="sub">project: <span class="proj" id="projName">—</span> &nbsp;·&nbsp; backend: <span class="proj" id="provName">…</span></div>
+</header>
+
+<main>
+  <nav class="rail" id="rail">
+    <button data-step="0" class="on">1 · Project</button>
+    <button data-step="1" disabled>2 · Sources</button>
+    <button data-step="2" disabled>3 · Research</button>
+    <button data-step="3" disabled>4 · Slides</button>
+    <button data-step="4" disabled>5 · Plan</button>
+    <button data-step="5" disabled>6 · Prompts</button>
+  </nav>
+
+  <!-- STEP 0: PROJECT -->
+  <section class="panel" id="step0">
+    <h2>Name the project</h2>
+    <p class="lead">A folder with this name is created under <b>projects/</b>. Your prompts doc and photos will live inside it.</p>
+    <label>Project name</label>
+    <input type="text" id="projInput" placeholder="e.g. fable5-launch">
+    <div class="row-actions"><button class="btn" id="createProj">Create Project.</button></div>
+    <div id="existing"></div>
+    <div class="status" id="st0"></div>
+  </section>
+
+  <!-- STEP 1: SOURCES -->
+  <section class="panel hidden" id="step1">
+    <h2>Where is the content?</h2>
+    <p class="lead">Paste up to 5 URLs. The server reads them for you. If a site blocks reading, paste its text below.</p>
+    <div id="urls"></div>
+    <button class="btn sm bone" id="addUrl">+ add url</button>
+    <label>Or paste raw text (optional fallback)</label>
+    <textarea id="rawtext" placeholder="paste article text here if URL reading fails..."></textarea>
+    <div class="row-actions"><button class="btn" id="readBtn">Read Sources.</button></div>
+    <div class="status" id="st1"></div>
+  </section>
+
+  <!-- STEP 2: RESEARCH (find + approve related sources) -->
+  <section class="panel hidden" id="step2">
+    <h2>Broaden the research</h2>
+    <p class="lead">I read your article, understood its topic, and searched the web for more current sources on the same subject. <b>Tick the ones to include</b>, then approve — only approved sources move forward.</p>
+    <div class="status" id="stTopic" style="color:var(--haldi);margin-bottom:8px;"></div>
+    <div id="foundList"></div>
+    <div class="row-actions">
+      <button class="btn teal sm" id="researchAgain">↻ search again</button>
+      <button class="btn bone sm" id="skipResearch">skip — use my sources only</button>
+      <button class="btn" id="approveBtn">Approve &amp; Continue.</button>
+    </div>
+    <div class="status" id="st2r"></div>
+  </section>
+
+  <!-- STEP 3: SLIDE COUNT -->
+  <section class="panel hidden" id="step3">
+    <h2>How many slides?</h2>
+    <p class="lead">Instagram carousel length — minimum 3, maximum 8.</p>
+    <div class="count-wrap" id="countWrap"></div>
+    <div class="row-actions"><button class="btn" id="divideBtn">Divide Content.</button></div>
+    <div class="status" id="st2"></div>
+  </section>
+
+  <!-- STEP 4: PLAN -->
+  <section class="panel hidden" id="step4">
+    <h2>The slide plan</h2>
+    <p class="lead">One row per slide. Hit <b>edit</b> to rewrite anything before converting. The plan auto-saves to your project folder.</p>
+    <div id="planRows"></div>
+    <div class="row-actions">
+      <button class="btn teal sm" id="redivide">↻ regenerate plan</button>
+      <button class="btn" id="convertBtn">Convert to Prompts.</button>
+    </div>
+    <div class="status" id="st3"></div>
+  </section>
+
+  <!-- STEP 5: PROMPTS -->
+  <section class="panel hidden" id="step5">
+    <h2>Style-locked prompts</h2>
+    <p class="lead">Square 1:1, English-only, Nano Banana-ready. Saved automatically as <b>prompts.md</b> in your project folder.</p>
+    <div class="hint"><b>Consistency move:</b> generate slide 1 first in Nano Banana, then attach it as a reference for slides 2+ with: <i>"Match the exact art style, palette and textures of the attached reference image."</i></div>
+    <div id="promptCards"></div>
+    <div class="row-actions">
+      <button class="btn bone sm" id="copyAll">copy all</button>
+      <button class="btn teal sm" id="resave">save prompts.md again</button>
+    </div>
+    <h2 style="margin-top:30px;">Keep the photos here</h2>
+    <p class="lead">Drop the images Nano Banana gives you — they're stored in <b>projects/<span id="projName2"></span>/photos/</b>.</p>
+    <div class="drop" id="drop">drag &amp; drop images here, or click to choose</div>
+    <input type="file" id="fileInput" accept="image/*" multiple class="hidden">
+    <div class="photo-list" id="photoList"></div>
+    <div class="status" id="st4"></div>
+  </section>
+</main>
+
+<script>
+/* Frozen Style DNA — never written by the AI, only assembled around its slot-fills */
+const DNA = {
+  open:{
+    mela:`A modern square 1:1 social media graphic for an Indian technology news brand — bold dark-mode editorial tech design with a handcrafted Odisha folk signature. Deep indigo background, hex #1C2B4A, flat like a premium dark interface, with a very subtle handloom cloth grain. One thin woven ikat arrowhead strip in earthy red #A93B26, turmeric ochre #D98E1F and bone #EDE0C2 runs only along the bottom edge as a brand band. The layout is structured on a clean modern grid like a tech keynote slide, with strong visual hierarchy and breathing room.`,
+    katha:`A modern square 1:1 social media graphic for an Indian technology news brand — minimal light-mode editorial tech design with a handcrafted Odisha folk signature. Warm bone paper background, hex #EDE0C2, with subtle handmade paper grain. Flat rectangular content cards, stat blocks and panels in deep indigo #1C2B4A, earthy red #A93B26 and peacock teal #14635C sit on a clean modern grid with generous negative space, and one thin woven ikat arrowhead strip runs along a single edge.`,
+    chinha:`A modern square 1:1 stat-card graphic for an Indian technology news brand — extreme minimal tech editorial with a handcrafted Odisha folk signature. Warm bone paper background, hex #EDE0C2, vast calm negative space, one large deep indigo #1C2B4A rounded panel like a sleek app card with a subtle dashed running-stitch border, holding the key information.`
+  },
+  close:`Flat matte colors only — deep indigo #1C2B4A, bone #EDE0C2, earthy red #A93B26, turmeric ochre #D98E1F, peacock teal #14635C, copper #B07A33 — applied like clean screen-print. All UI elements (interface windows, cards, charts, chips, buttons) are crisp flat vector with sharp corners or gentle rounding, drawn like a modern design system. The Odisha folk craft appears ONLY as accents: thin ikat arrowhead strips, dashed running-stitch borders on one or two cards, a single small copper temple-wheel logo mark, tiny white mirror dots used as bullet points or data markers, and at most one small folk motif badge. Hard offset shadows with no blur. The overall feeling is a sharp contemporary tech media post — roughly seventy percent clean modern editorial design and thirty percent handcrafted folk accent — confident, premium, and clearly about technology. No gradients, no gloss, no neon, no 3D rendering, no photorealism, no full folk-painting style, no dense ornamentation, no busy borders, no extra text beyond the words specified.`,
+  typo:(h,p)=>`A huge bold modern display headline in warm bone #EDE0C2 reads "${h}" — confident geometric sans-serif with tight tracking and a hard offset shadow in earthy red, sized like a keynote title. Below or beside it, a compact turmeric-ochre highlight chip with a subtle dashed stitch border carries the phrase "${p}" in bold condensed dark capitals.`,
+  typoLight:(h,p)=>`A huge bold modern display headline in deep indigo #1C2B4A reads "${h}" — confident geometric sans-serif with tight tracking, sized like a keynote title. A compact highlight chip in turmeric ochre or peacock teal with a subtle dashed stitch border carries the phrase "${p}" in bold condensed capitals.`
+};
+const MODE_CYCLE=["mela","katha","mela","katha","chinha","katha","mela","chinha"];
+
+const state={project:"",provider:"",sources:[],rawtext:"",slideCount:5,plan:[],prompts:[]};
+const $=id=>document.getElementById(id);
+const setStatus=(id,msg,cls="")=>{const e=$(id);e.textContent=msg;e.className="status "+cls;};
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+
+async function api(path,opts={}){
+  const r=await fetch(path,{headers:{"Content-Type":"application/json"},...opts});
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(d.error||r.status);
+  return d;
+}
+async function llm(prompt){ return (await api("/api/llm",{method:"POST",body:JSON.stringify({prompt,provider:state.provider})})).text; }
+function extractJSON(t){
+  const a=t.indexOf("["),b=t.lastIndexOf("]"),c=t.indexOf("{"),d=t.lastIndexOf("}");
+  let raw=null;
+  if(a>-1&&b>a&&(c===-1||a<c)) raw=t.slice(a,b+1); else if(c>-1&&d>c) raw=t.slice(c,d+1);
+  if(!raw) throw new Error("Model did not return JSON — click again.");
+  return JSON.parse(raw.replace(/```json|```/g,""));
+}
+
+/* nav */
+const steps=[...document.querySelectorAll("section.panel")];
+const railBtns=[...document.querySelectorAll("#rail button")];
+function go(n){steps.forEach((s,i)=>s.classList.toggle("hidden",i!==n));
+  railBtns.forEach((b,i)=>{b.classList.toggle("on",i===n);if(i<=n)b.disabled=false;});
+  window.scrollTo({top:0,behavior:"smooth"});}
+railBtns.forEach(b=>b.addEventListener("click",()=>go(+b.dataset.step)));
+
+/* boot: provider from .env via server */
+(async()=>{
+  try{
+    const cfg=await api("/api/config");
+    if(!cfg.providers.length){ $("provName").textContent="NO KEY IN .env!"; setStatus("st0","No API key found. Add GEMINI_API_KEY or GROQ_API_KEY to the .env file and restart the server.","err"); return; }
+    state.provider=cfg.default; $("provName").textContent=cfg.default;
+    const pl=await api("/api/projects");
+    if(pl.projects.length){
+      $("existing").innerHTML="<label>or reopen an existing project</label>"+
+        pl.projects.map(p=>`<span class="projchip" data-p="${p}">${p}</span>`).join("");
+      $("existing").querySelectorAll(".projchip").forEach(ch=>ch.addEventListener("click",()=>openProject(ch.dataset.p)));
+    }
+  }catch(e){ setStatus("st0","Server not reachable — run: python server.py","err"); }
+})();
+
+async function openProject(name){
+  const d=await api("/api/projects",{method:"POST",body:JSON.stringify({name})});
+  state.project=d.project; $("projName").textContent=d.project; $("projName2").textContent=d.project;
+  setStatus("st0",`Project folder ready: ${d.path}`,"ok"); go(1);
+}
+$("createProj").addEventListener("click",()=>{
+  const n=$("projInput").value.trim();
+  if(!n) return setStatus("st0","Give the project a name first.","err");
+  openProject(n).catch(e=>setStatus("st0",e.message,"err"));
+});
+
+/* sources */
+const urlsDiv=$("urls");
+function addUrlRow(){ if(urlsDiv.children.length>=5)return;
+  const row=document.createElement("div");row.className="urlrow";
+  row.innerHTML=`<input type="text" placeholder="https://..."><span class="st">—</span>`;
+  urlsDiv.appendChild(row);}
+addUrlRow();
+$("addUrl").addEventListener("click",addUrlRow);
+$("readBtn").addEventListener("click",async e=>{
+  const urls=[...urlsDiv.querySelectorAll("input")].map(i=>i.value.trim()).filter(Boolean);
+  state.rawtext=$("rawtext").value.trim();
+  if(!urls.length&&!state.rawtext) return setStatus("st1","Add a URL or paste text.","err");
+  e.target.disabled=true; setStatus("st1","Reading…");
+  try{
+    state.sources=[];
+    if(urls.length){
+      const d=await api("/api/read",{method:"POST",body:JSON.stringify({urls})});
+      const rows=[...urlsDiv.querySelectorAll(".urlrow")];
+      d.sources.forEach((s,i)=>{const st=rows[i].querySelector(".st");
+        if(s.ok){state.sources.push(s);st.textContent=(s.chars/1000).toFixed(1)+"k ✓";st.style.color="#8FBF9A";}
+        else{st.textContent="failed ✗";st.style.color="#E08070";}});
+    }
+    if(state.rawtext) state.sources.push({url:"(pasted text)",text:state.rawtext.slice(0,15000)});
+    if(!state.sources.length) throw new Error("Nothing readable — paste the text manually.");
+    setStatus("st1",`Read ${state.sources.length} source(s).`,"ok");
+    go(2); runResearch();
+  }catch(err){ setStatus("st1",err.message,"err"); }
+  e.target.disabled=false;
+});
+
+/* research: find + approve related sources */
+state.found=[];        // sources returned by search
+state.approved=[];     // user-ticked sources (text fetched on approve)
+async function runResearch(){
+  $("foundList").innerHTML=""; $("stTopic").textContent="";
+  setStatus("st2r",'Reading your article and searching the web for related sources…');
+  try{
+    const baseText=state.sources.map(s=>s.text).join("\n\n").slice(0,6000);
+    const urls=state.sources.map(s=>s.url).filter(u=>u&&u!=="(pasted text)");
+    const d=await api("/api/research",{method:"POST",body:JSON.stringify({text:baseText,urls})});
+    state.found=d.sources||[];
+    $("stTopic").textContent = d.topic ? ("Detected topic: "+d.topic) : "";
+    if(!state.found.length){ setStatus("st2r","No extra sources found — you can continue with your own.","ok"); return; }
+    $("foundList").innerHTML = state.found.map((s,i)=>
+      `<label class="found-row"><input type="checkbox" data-i="${i}" checked> `+
+      `<span class="found-meta"><a href="${s.url}" target="_blank">${esc(s.title||s.url)}</a>`+
+      (s.snippet?`<span class="found-snip">${esc(s.snippet)}</span>`:"")+
+      `<span class="found-url">${esc(s.url)}</span></span></label>`).join("");
+    setStatus("st2r",`Found ${state.found.length} related source(s). Tick the ones to include, then approve.`,"ok");
+  }catch(err){ setStatus("st2r","Search unavailable: "+err.message+" — you can skip and use your own sources.","err"); }
+}
+$("researchAgain").addEventListener("click",runResearch);
+$("skipResearch").addEventListener("click",()=>{ go(3); });
+$("approveBtn").addEventListener("click",async e=>{
+  const picks=[...$("foundList").querySelectorAll("input:checked")].map(c=>state.found[+c.dataset.i]);
+  if(!picks.length){ go(3); return; }   // nothing ticked → just continue
+  e.target.disabled=true; setStatus("st2r",`Reading ${picks.length} approved source(s)…`);
+  try{
+    const d=await api("/api/read",{method:"POST",body:JSON.stringify({urls:picks.map(p=>p.url)})});
+    let added=0;
+    d.sources.forEach(s=>{ if(s.ok){ state.sources.push(s); added++; } });
+    setStatus("st2r",`Added ${added} source(s). Total now ${state.sources.length}.`,"ok");
+    go(3);
+  }catch(err){ setStatus("st2r",err.message,"err"); }
+  e.target.disabled=false;
+});
+
+/* slide count */
+const cw=$("countWrap");
+for(let n=3;n<=8;n++){const b=document.createElement("button");b.textContent=n;
+  if(n===state.slideCount)b.classList.add("on");
+  b.addEventListener("click",()=>{state.slideCount=n;[...cw.children].forEach(c=>c.classList.toggle("on",+c.textContent===n));});
+  cw.appendChild(b);}
+
+async function dividePlan(){
+  const corpus=state.sources.map(s=>`SOURCE (${s.url}):\n${s.text}`).join("\n\n---\n\n").slice(0,18000);
+  const p=`You are a content strategist for an Indian tech & AI brand with a witty, confident, meme-native voice.
+Divide the SOURCE CONTENT below into exactly ${state.slideCount} Instagram carousel slides.
+Slide 1 must be a scroll-stopping hook; the last slide lands a takeaway or call-to-action; middle slides each carry ONE clear idea.
+Respond with ONLY a JSON array, no markdown fences. Each item:
+{"title":"short slide title (max 6 words)","brief":"2-3 sentences describing exactly what this slide communicates","key_points":["up to 3 short factual points from the source"]}
+SOURCE CONTENT:\n${corpus}`;
+  const plan=extractJSON(await llm(p));
+  state.plan=plan.slice(0,state.slideCount).map((s,i)=>({title:s.title||("Slide "+(i+1)),brief:s.brief||"",key_points:s.key_points||[]}));
+  api("/api/save",{method:"POST",body:JSON.stringify({project:state.project,filename:"plan.json",content:JSON.stringify(state.plan,null,2)})}).catch(()=>{});
+}
+$("divideBtn").addEventListener("click",async e=>{
+  e.target.disabled=true;setStatus("st2",`Dividing into ${state.slideCount} slides…`);
+  try{await dividePlan();renderPlan();setStatus("st2","Done.","ok");go(4);}
+  catch(err){setStatus("st2",err.message,"err");}
+  e.target.disabled=false;
+});
+
+function renderPlan(){
+  const wrap=$("planRows");wrap.innerHTML="";
+  state.plan.forEach((s,i)=>{
+    const row=document.createElement("div");row.className="slide-row";
+    row.innerHTML=`<div class="head"><div><span class="num">${String(i+1).padStart(2,"0")}</span>
+      &nbsp;<span class="title">${esc(s.title)}</span></div>
+      <button class="btn bone sm edit">edit</button></div>
+      <div class="brief">${esc(s.brief)}${s.key_points.length?"\n• "+s.key_points.map(esc).join("\n• "):""}</div>
+      <div class="editbox"><label>Title</label><input type="text" class="e-title" value="${esc(s.title)}">
+      <label>Content</label><textarea class="e-brief">${esc(s.brief+(s.key_points.length?"\n• "+s.key_points.join("\n• "):""))}</textarea>
+      <div class="row-actions"><button class="btn sm save">save row.</button></div></div>`;
+    row.querySelector(".edit").addEventListener("click",()=>row.classList.toggle("editing"));
+    row.querySelector(".save").addEventListener("click",()=>{
+      s.title=row.querySelector(".e-title").value.trim();
+      const lines=row.querySelector(".e-brief").value.split("\n");
+      s.key_points=lines.filter(l=>l.trim().startsWith("•")).map(l=>l.replace(/^\s*•\s*/,""));
+      s.brief=lines.filter(l=>!l.trim().startsWith("•")).join("\n").trim();
+      api("/api/save",{method:"POST",body:JSON.stringify({project:state.project,filename:"plan.json",content:JSON.stringify(state.plan,null,2)})}).catch(()=>{});
+      renderPlan();});
+    wrap.appendChild(row);
+  });
+}
+$("redivide").addEventListener("click",async e=>{
+  e.target.disabled=true;setStatus("st3","Regenerating plan…");
+  try{await dividePlan();renderPlan();setStatus("st3","Fresh plan ready.","ok");}
+  catch(err){setStatus("st3",err.message,"err");}
+  e.target.disabled=false;
+});
+
+/* convert */
+$("convertBtn").addEventListener("click",async e=>{
+  e.target.disabled=true;setStatus("st3","Filling the style slots…");
+  try{
+    const planTxt=state.plan.map((s,i)=>`Slide ${i+1} [${MODE_CYCLE[i]} mode] — ${s.title}\n${s.brief}\nPoints: ${s.key_points.join("; ")}`).join("\n\n");
+    const p=`You are filling content slots for a locked Indian folk-craft design system. For EACH slide below, write:
+- "headline": punchy ENGLISH display line, ALL CAPS, max 7 words, may end with a period
+- "punch": ENGLISH punch phrase, ALL CAPS, max 4 words, ends with a period
+- "scene": 2-3 sentences describing ONLY the central visual, built from this TECH-FIRST vocabulary: a flat vector chat interface window, a browser or app card, a terminal window with code lines, one huge hero stat number, a simple flat bar or line chart, a progress bar, a processor chip icon, toggle switches, cursor arrows, comparison cards side by side. One or two cards may carry a dashed stitch border, and AT MOST ONE small folk accent may appear (a small copper temple-wheel badge, a tiny applique sun chip, or a short row of small tribal stick figures used as a chart legend). Describe placement on a clean grid. It must read as a technology graphic, not a painting — never mention gradients, 3D, photos or realism. English only.
+- "tags": 1-2 tiny label strings in MONO CAPS style like "CONTEXT / 1,000,000"
+Respond ONLY with a JSON array of ${state.plan.length} objects {"headline","punch","scene","tags":[...]}.
+SLIDES:\n${planTxt}`;
+    const fills=extractJSON(await llm(p));
+    state.prompts=state.plan.map((s,i)=>{
+      const f=fills[i]||{headline:s.title.toUpperCase()+".",punch:"KNOW THIS.",scene:"",tags:[]};
+      const mode=MODE_CYCLE[i];
+      const typo=(mode==="mela")?DNA.typo(f.headline,f.punch):DNA.typoLight(f.headline,f.punch);
+      const tags=(f.tags&&f.tags.length)?` Small tilted label tags in monospaced capital letters read ${f.tags.map(t=>`"${t}"`).join(" and ")}.`:"";
+      return {mode,headline:f.headline,text:`${DNA.open[mode]} ${f.scene} ${typo}${tags} ${DNA.close}`};
+    });
+    renderPrompts(); await savePromptsMd();
+    setStatus("st3","Prompts ready & saved.","ok"); go(5);
+  }catch(err){setStatus("st3",err.message,"err");}
+  e.target.disabled=false;
+});
+
+async function savePromptsMd(){
+  const md="# Kalinga Code — Carousel Prompts ("+state.project+")\n\n"+
+    state.prompts.map((p,i)=>`## Slide ${i+1} — ${p.headline} (${p.mode} mode)\n\n${p.text}\n`).join("\n");
+  await api("/api/save",{method:"POST",body:JSON.stringify({project:state.project,filename:"prompts.md",content:md})});
+}
+function renderPrompts(){
+  const wrap=$("promptCards");wrap.innerHTML="";
+  state.prompts.forEach((p,i)=>{
+    const c=document.createElement("div");c.className="pcard";
+    c.innerHTML=`<div class="ph"><div><span class="tag ${p.mode}">${p.mode} mode</span>
+      <span class="pt">${String(i+1).padStart(2,"0")} · ${esc(p.headline)}</span></div>
+      <button class="btn bone sm copy">copy</button></div>
+      <textarea readonly>${esc(p.text)}</textarea>`;
+    c.querySelector(".copy").addEventListener("click",ev=>{
+      navigator.clipboard.writeText(p.text);
+      ev.target.textContent="copied ✓";setTimeout(()=>ev.target.textContent="copy",1400);});
+    wrap.appendChild(c);
+  });
+}
+$("copyAll").addEventListener("click",e=>{
+  navigator.clipboard.writeText(state.prompts.map((p,i)=>`--- SLIDE ${i+1} (${p.mode}) ---\n${p.text}`).join("\n\n"));
+  e.target.textContent="copied ✓";setTimeout(()=>e.target.textContent="copy all",1400);});
+$("resave").addEventListener("click",async e=>{
+  try{await savePromptsMd();setStatus("st4","Saved prompts.md to the project folder.","ok");}
+  catch(err){setStatus("st4",err.message,"err");}});
+
+/* photo drop -> projects/<name>/photos/ */
+const drop=$("drop"),fi=$("fileInput");
+drop.addEventListener("click",()=>fi.click());
+drop.addEventListener("dragover",e=>{e.preventDefault();drop.classList.add("over");});
+drop.addEventListener("dragleave",()=>drop.classList.remove("over"));
+drop.addEventListener("drop",e=>{e.preventDefault();drop.classList.remove("over");uploadPhotos(e.dataTransfer.files);});
+fi.addEventListener("change",()=>uploadPhotos(fi.files));
+async function uploadPhotos(files){
+  const fd=new FormData();
+  [...files].forEach(f=>fd.append("photos",f));
+  try{
+    const r=await fetch("/api/upload/"+encodeURIComponent(state.project),{method:"POST",body:fd});
+    const d=await r.json();
+    if(!r.ok) throw new Error(d.error||"upload failed");
+    setStatus("st4",`Saved ${d.saved.length} photo(s) into the project folder.`,"ok");
+    const fl=await api(`/api/project/${encodeURIComponent(state.project)}/files`);
+    $("photoList").textContent="photos/: "+fl.photos.join(", ");
+  }catch(err){ setStatus("st4",err.message,"err"); }
+}
+</script>
+</body>
+</html>
