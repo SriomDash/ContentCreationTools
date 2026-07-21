@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IdeasLamp — AI content research</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header class="masthead">
+    <div class="brand">
+      <span class="logo">&#128161;</span>
+      <div>
+        <h1>IdeasLamp</h1>
+        <p class="tagline">AI as a lens on everything human</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="pair-open" class="btn accent">&#10022; Find a pairing</button>
+      <button id="fetch-btn" class="btn">&#8635; Fetch</button>
+      <button id="sources-btn" class="btn ghost">Sources</button>
+    </div>
+  </header>
+
+  <!-- Sticky toolbar: stats + filters -->
+  <div class="toolbar">
+    <div id="stats" class="stats"></div>
+    <div class="searchbar">
+      <span class="search-ico">&#128269;</span>
+      <input type="search" id="search" placeholder="Search titles &amp; summaries — e.g. interpretability reasoning" />
+      <button id="saved-toggle" class="btn ghost">&#9733; Saved</button>
+    </div>
+    <div class="controls">
+      <div class="control">
+        <label for="min-score">Relevance</label>
+        <input type="range" id="min-score" min="0" max="1" step="0.01" value="0.2" />
+        <span id="min-score-val" class="pill">0.20</span>
+      </div>
+      <div class="control date-control">
+        <label for="date-filter">Day</label>
+        <input type="date" id="date-filter" list="active-dates" />
+        <datalist id="active-dates"></datalist>
+        <button id="today-btn" class="btn ghost tiny">Today</button>
+        <button id="clear-date-btn" class="btn ghost tiny" hidden>Clear</button>
+      </div>
+      <label class="checkbox"><input type="checkbox" id="include-seen" /> Show dismissed</label>
+    </div>
+    <div id="angle-chips" class="chips"></div>
+  </div>
+
+  <!-- Collapsible pairing studio -->
+  <section id="pairing-panel" class="pairing-panel" hidden>
+    <div class="panel-head">
+      <div class="panel-title"><span class="spark">&#10022;</span> Pairing studio
+        <span class="panel-sub">collide two angles into a reel idea</span></div>
+      <div class="pairing-controls">
+        <div class="seg">
+          <button class="seg-btn active" data-mode="cross">Cross-angle</button>
+          <button class="seg-btn" data-mode="critic">Critic</button>
+        </div>
+        <button id="pair-btn" class="btn accent">Find a pairing</button>
+        <button id="reroll-btn" class="btn ghost" disabled>&#8635; Re-roll</button>
+        <button id="pair-close" class="btn ghost tiny">Close</button>
+      </div>
+    </div>
+    <div id="pairing-result" class="pairing-result">
+      <div class="empty subtle">Pick a mode and hit “Find a pairing”.</div>
+    </div>
+  </section>
+
+  <!-- Per-day topic digest -->
+  <section id="digest-strip" class="digest-strip" hidden></section>
+
+  <main id="feed" class="feed"></main>
+
+  <!-- Sources drawer -->
+  <aside id="sources-drawer" class="drawer">
+    <div class="drawer-head">
+      <h2>Sources</h2>
+      <button id="close-sources" class="btn ghost tiny">Close</button>
+    </div>
+    <form id="add-source-form" class="add-source">
+      <input type="text" id="new-url" placeholder="https://example.com" required />
+      <select id="new-angle">
+        <option value="tech">tech</option>
+        <option value="biology">biology</option>
+        <option value="philosophy">philosophy</option>
+        <option value="psychology">psychology</option>
+        <option value="climate">climate</option>
+        <option value="culture">culture</option>
+        <option value="market">market</option>
+        <option value="critic">critic</option>
+      </select>
+      <button type="submit" class="btn">Add</button>
+    </form>
+    <div id="sources-list" class="sources-list"></div>
+  </aside>
+  <div id="overlay" class="overlay"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

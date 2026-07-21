@@ -58,6 +58,9 @@
   .tag.mela{background:var(--geru);color:var(--sankha);border-color:var(--kajal);transform:rotate(-1deg);}
   .tag.katha{background:var(--bone);color:var(--kajal);border-color:var(--kajal);transform:rotate(1deg);}
   .tag.chinha{background:var(--teal);color:var(--sankha);border-color:var(--kajal);transform:rotate(-1deg);}
+  .tag.hara{background:#06402B;color:var(--sankha);border-color:var(--kajal);transform:rotate(-1deg);}
+  .tag.raktam{background:#3C0008;color:var(--sankha);border-color:var(--kajal);transform:rotate(1deg);}
+  .tag.sona{background:#F0C900;color:var(--kajal);border-color:var(--kajal);transform:rotate(-1deg);}
   .status{font-size:12px;margin-top:12px;color:var(--haldi);min-height:18px;}
   .status.err{color:#E08070;} .status.ok{color:#8FBF9A;}
   .urlrow{display:flex;gap:10px;margin-bottom:10px;align-items:center;}
@@ -211,15 +214,28 @@
 /* Frozen Style DNA — never written by the AI, only assembled around its slot-fills */
 const DNA = {
   open:{
-    mela:`A modern square 1:1 social media graphic for an Indian technology news brand — bold dark-mode editorial tech design with a handcrafted Odisha folk signature. Deep indigo background, hex #1C2B4A, flat like a premium dark interface, with a very subtle handloom cloth grain. One thin woven ikat arrowhead strip in earthy red #A93B26, turmeric ochre #D98E1F and bone #EDE0C2 runs only along the bottom edge as a brand band. The layout is structured on a clean modern grid like a tech keynote slide, with strong visual hierarchy and breathing room.`,
-    katha:`A modern square 1:1 social media graphic for an Indian technology news brand — minimal light-mode editorial tech design with a handcrafted Odisha folk signature. Warm bone paper background, hex #EDE0C2, with subtle handmade paper grain. Flat rectangular content cards, stat blocks and panels in deep indigo #1C2B4A, earthy red #A93B26 and peacock teal #14635C sit on a clean modern grid with generous negative space, and one thin woven ikat arrowhead strip runs along a single edge.`,
-    chinha:`A modern square 1:1 stat-card graphic for an Indian technology news brand — extreme minimal tech editorial with a handcrafted Odisha folk signature. Warm bone paper background, hex #EDE0C2, vast calm negative space, one large deep indigo #1C2B4A rounded panel like a sleek app card with a subtle dashed running-stitch border, holding the key information.`
+    mela:`A modern square 1:1 social media graphic for an Indian technology news brand — bold dark-mode editorial tech design with a handcrafted Odisha folk signature. Deep indigo background, hex #1C2B4A, flat like a premium dark interface, with a very subtle handloom cloth grain. The layout is structured on a clean modern grid like a tech keynote slide, with strong visual hierarchy and breathing room.`,
+    katha:`A modern square 1:1 social media graphic for an Indian technology news brand — minimal light-mode editorial tech design with a handcrafted Odisha folk signature. Warm bone paper background, hex #EDE0C2, with subtle handmade paper grain. Flat rectangular content cards, stat blocks and panels in deep indigo #1C2B4A, earthy red #A93B26 and peacock teal #14635C sit on a clean modern grid with generous negative space.`,
+    chinha:`A modern square 1:1 stat-card graphic for an Indian technology news brand — extreme minimal tech editorial with a handcrafted Odisha folk signature. Warm bone paper background, hex #EDE0C2, vast calm negative space, one large deep indigo #1C2B4A rounded panel like a sleek app card holding the key information.`,
+    hara:`A modern square 1:1 social media graphic for an Indian technology news brand — bold dark-mode editorial tech design with a handcrafted Odisha folk signature. Deep forest green background, hex #06402B, flat like a premium dark interface, with a very subtle handloom cloth grain. Flat content cards and panels in deep indigo #1C2B4A, earthy red #A93B26 and bone #EDE0C2 sit on a clean modern grid with strong visual hierarchy and breathing room.`,
+    raktam:`A modern square 1:1 social media graphic for an Indian technology news brand — bold dark-mode editorial tech design with a handcrafted Odisha folk signature. Deep maroon background, hex #3C0008, flat like a premium dark interface, with a very subtle handloom cloth grain. Flat content cards and panels in forest green #06402B, turmeric ochre #D98E1F and bone #EDE0C2 sit on a clean modern grid with strong visual hierarchy.`,
+    sona:`A modern square 1:1 social media graphic for an Indian technology news brand — bold light-mode editorial tech design with a handcrafted Odisha folk signature. Vivid turmeric yellow background, hex #F0C900, with a very subtle handmade paper grain. Flat rectangular content cards and panels in deep maroon #3C0008, deep indigo #1C2B4A and forest green #06402B sit on a clean modern grid with generous negative space.`
   },
-  close:`Flat matte colors only — deep indigo #1C2B4A, bone #EDE0C2, earthy red #A93B26, turmeric ochre #D98E1F, peacock teal #14635C, copper #B07A33 — applied like clean screen-print. All UI elements (interface windows, cards, charts, chips, buttons) are crisp flat vector with sharp corners or gentle rounding, drawn like a modern design system. The Odisha folk craft appears ONLY as accents: thin ikat arrowhead strips, dashed running-stitch borders on one or two cards, a single small copper temple-wheel logo mark, tiny white mirror dots used as bullet points or data markers, and at most one small folk motif badge. Hard offset shadows with no blur. The overall feeling is a sharp contemporary tech media post — roughly seventy percent clean modern editorial design and thirty percent handcrafted folk accent — confident, premium, and clearly about technology. No gradients, no gloss, no neon, no 3D rendering, no photorealism, no full folk-painting style, no dense ornamentation, no busy borders, no extra text beyond the words specified.`,
+  pattern:[
+    `FOLK ACCENT — Sambalpuri ikat band: one thin horizontal strip of woven ikat chevron arrows in earthy red #A93B26, turmeric ochre #D98E1F and bone #EDE0C2, running flush along the bottom edge only. No other folk decoration.`,
+    `FOLK ACCENT — Pipili appliqué row: one narrow band of bold flat geometric cutwork shapes — circles, triangles and squares — in earthy red, peacock teal and golden yellow, stitched tightly along one edge like bright fabric appliqué. No ikat, no other folk decoration.`,
+    `FOLK ACCENT — Saura tribal frieze: one thin strip along a single edge showing a row of tiny flat white stick figures — alternating humans and horses — spaced evenly like cave-painting pictographs, on a dark ground. No other folk decoration.`,
+    `FOLK ACCENT — Konark chakra badge: one single flat 24-spoke chariot wheel (the Konark Sun Wheel), rendered as a crisp vector circle in copper #B07A33 and bone, placed in one corner only as a logo badge. No band, no other folk decoration.`,
+    `FOLK ACCENT — Pattachitra lotus border: one narrow strip along a single edge of flat stylised lotus flowers in earthy red and turmeric ochre, each petal crisp and graphic like a woodblock print, facing alternately up and down. No other folk decoration.`,
+    `FOLK ACCENT — Kotpad tribal weave band: one thin strip of stepped diamond zigzag geometry in dark maroon #3C0008 and golden yellow #F0C900, tight and repeating like a handloom selvedge border, running along the top edge only. No other folk decoration.`,
+    `FOLK ACCENT — Kantha running-stitch border: one simple dashed line border in contrasting bone or turmeric ochre tracing the inside edge of one main content card only, like hand-sewn kantha embroidery. Extremely minimal. No other folk decoration.`,
+    `FOLK ACCENT — Dhokra medallion row: three small flat circular tribal medallions in copper #B07A33 — each showing a simple geometric sunburst — spaced evenly along the bottom edge, like cast Dhokra craft buttons. No band, no other folk decoration.`
+  ],
+  close:`Flat matte colors only — drawn from this full Pattachitra-rooted palette: deep indigo #1C2B4A, bone #EDE0C2, earthy red #A93B26, turmeric ochre #D98E1F, peacock teal #14635C, copper #B07A33, forest green #06402B, dark maroon #3C0008, golden yellow #F0C900 — applied like clean screen-print. Each slide must use at least THREE of these colors visibly. All UI elements (interface windows, cards, charts, chips, buttons) are crisp flat vector with sharp corners or gentle rounding, drawn like a modern design system. Render ONLY the single folk accent described in the FOLK ACCENT instruction above — nothing else from Odisha craft. In the bottom-right corner, render the word ALOCHANA in small wide-spaced bold capitals using a clean geometric sans-serif — this is the only text in that area, no tagline, no icon. Hard offset shadows with no blur. The overall feeling is a sharp contemporary tech media post — roughly seventy percent clean modern editorial design and thirty percent handcrafted folk accent — confident, premium, and clearly about technology. No gradients, no gloss, no neon, no 3D rendering, no photorealism, no full folk-painting style, no dense ornamentation, no busy borders, no extra text beyond the words specified.`,
   typo:(h,p)=>`A huge bold modern display headline in warm bone #EDE0C2 reads "${h}" — confident geometric sans-serif with tight tracking and a hard offset shadow in earthy red, sized like a keynote title. Below or beside it, a compact turmeric-ochre highlight chip with a subtle dashed stitch border carries the phrase "${p}" in bold condensed dark capitals.`,
   typoLight:(h,p)=>`A huge bold modern display headline in deep indigo #1C2B4A reads "${h}" — confident geometric sans-serif with tight tracking, sized like a keynote title. A compact highlight chip in turmeric ochre or peacock teal with a subtle dashed stitch border carries the phrase "${p}" in bold condensed capitals.`
 };
-const MODE_CYCLE=["mela","katha","mela","katha","chinha","katha","mela","chinha"];
+const MODE_CYCLE=["mela","katha","hara","raktam","sona","katha","hara","mela"];
 
 const state={project:"",provider:"",sources:[],rawtext:"",slideCount:5,plan:[],prompts:[]};
 const $=id=>document.getElementById(id);
@@ -413,9 +429,11 @@ SLIDES:\n${planTxt}`;
     state.prompts=state.plan.map((s,i)=>{
       const f=fills[i]||{headline:s.title.toUpperCase()+".",punch:"KNOW THIS.",scene:"",tags:[]};
       const mode=MODE_CYCLE[i];
-      const typo=(mode==="mela")?DNA.typo(f.headline,f.punch):DNA.typoLight(f.headline,f.punch);
+      const darkModes=["mela","hara","raktam"];
+      const typo=darkModes.includes(mode)?DNA.typo(f.headline,f.punch):DNA.typoLight(f.headline,f.punch);
       const tags=(f.tags&&f.tags.length)?` Small tilted label tags in monospaced capital letters read ${f.tags.map(t=>`"${t}"`).join(" and ")}.`:"";
-      return {mode,headline:f.headline,text:`${DNA.open[mode]} ${f.scene} ${typo}${tags} ${DNA.close}`};
+      const pattern=DNA.pattern[i%DNA.pattern.length];
+      return {mode,headline:f.headline,text:`${DNA.open[mode]} ${f.scene} ${typo}${tags} ${pattern} ${DNA.close}`};
     });
     renderPrompts(); await savePromptsMd();
     setStatus("st3","Prompts ready & saved.","ok"); go(5);
