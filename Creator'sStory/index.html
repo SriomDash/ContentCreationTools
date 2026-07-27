@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Creator's Story</title>
+<style>
+  :root {
+    --bg: #0f1220;
+    --card: #191d33;
+    --card2: #12162a;
+    --accent: #6c8cff;
+    --accent2: #33d6a6;
+    --text: #e8eaf5;
+    --muted: #9aa0bd;
+    --border: #2a2f4d;
+    --danger: #ff6b6b;
+    --ok: #33d6a6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: radial-gradient(1200px 600px at 70% -10%, #1c2246, var(--bg));
+    color: var(--text);
+    min-height: 100vh;
+    padding: 32px 16px 60px;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 26px; margin: 0 0 4px; letter-spacing: .3px; }
+  .sub { color: var(--muted); margin: 0 0 24px; font-size: 14px; }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  }
+
+  .status-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .badge {
+    background: var(--card2); border: 1px solid var(--border);
+    border-radius: 999px; padding: 6px 14px; font-size: 13px; color: var(--muted);
+  }
+  .badge b { color: var(--text); }
+  .creator-name { font-size: 20px; font-weight: 700; }
+
+  .progress { display: flex; gap: 6px; margin-top: 14px; }
+  .pip {
+    flex: 1; height: 8px; border-radius: 6px; background: #262c4a;
+    border: 1px solid var(--border);
+  }
+  .pip.done { background: linear-gradient(90deg, var(--accent), var(--accent2)); border-color: transparent; }
+  .pip.locked { opacity: .45; }
+
+  label { display: block; font-size: 13px; color: var(--muted); margin: 14px 0 6px; }
+  input[type=text], textarea {
+    width: 100%; background: var(--card2); color: var(--text);
+    border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px;
+    font-size: 15px; font-family: inherit; resize: vertical;
+  }
+  input[type=text]:focus, textarea:focus { outline: none; border-color: var(--accent); }
+  textarea { min-height: 150px; line-height: 1.5; }
+  .count { font-size: 12px; color: var(--muted); text-align: right; margin-top: 4px; }
+
+  .btn {
+    appearance: none; border: none; cursor: pointer;
+    background: linear-gradient(90deg, var(--accent), #8aa2ff);
+    color: white; font-weight: 600; font-size: 15px;
+    padding: 12px 22px; border-radius: 10px; margin-top: 18px;
+  }
+  .btn:hover { filter: brightness(1.08); }
+  .btn.secondary { background: var(--card2); border: 1px solid var(--border); color: var(--text); }
+  .btn.ghost { background: transparent; border: 1px dashed var(--border); color: var(--muted); }
+  .btn:disabled { opacity: .4; cursor: not-allowed; filter: none; }
+  .btn-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+  .msg { margin-top: 16px; font-size: 14px; min-height: 20px; }
+  .msg.ok { color: var(--ok); }
+  .msg.err { color: var(--danger); }
+
+  .hint { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+  .divider { height: 1px; background: var(--border); margin: 22px 0; }
+
+  .creators-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+  .creator-item {
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--card2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 14px; font-size: 14px;
+  }
+  .creator-item .num { color: var(--muted); }
+  .full-tag { color: var(--ok); font-size: 12px; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎬 Creator's Story</h1>
+  <p class="sub">Enter data below &mdash; every save is written straight into <b>data.csv</b>.</p>
+
+  <!-- Current creator + progress -->
+  <div class="card">
+    <div class="status-row">
+      <div id="creatorLabel" class="creator-name">No creator yet</div>
+      <span class="badge">Row <b id="countNow">0</b> / <b id="maxRows">10</b></span>
+    </div>
+    <div class="progress" id="progress"></div>
+    <div class="hint" id="ruleHint"></div>
+  </div>
+
+  <!-- New creator form -->
+  <div class="card" id="creatorCard">
+    <label for="creatorInput">Creator name</label>
+    <input type="text" id="creatorInput" placeholder="e.g. Jane Doe" autocomplete="off" />
+    <div class="btn-row">
+      <button class="btn" id="setCreatorBtn">➕ Start this creator</button>
+    </div>
+    <div class="hint" id="creatorHint"></div>
+  </div>
+
+  <!-- Row entry form -->
+  <div class="card" id="rowCard">
+    <label for="topic">Topic</label>
+    <input type="text" id="topic" placeholder="What is this about?" autocomplete="off" />
+
+    <label for="hook">Hook</label>
+    <input type="text" id="hook" placeholder="The opening hook line" autocomplete="off" />
+
+    <label for="transcribe">Transcribe</label>
+    <textarea id="transcribe" placeholder="Paste the full transcript here (500-600 words is fine - it stays in one row)"></textarea>
+    <div class="count"><span id="wordCount">0</span> words</div>
+
+    <div class="btn-row">
+      <button class="btn" id="saveRowBtn">💾 Save row</button>
+      <button class="btn secondary hidden" id="addCreatorBtn">👤 Add another creator</button>
+    </div>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <!-- Creators summary -->
+  <div class="card" id="summaryCard">
+    <b>Creators in this file</b>
+    <div class="creators-list" id="creatorsList"></div>
+  </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+
+async function api(path, method = "GET", body = null) {
+  const opts = { method, headers: { "Content-Type": "application/json" } };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(path, opts);
+  return res.json();
+}
+
+function setMsg(text, kind) {
+  const el = $("msg");
+  el.textContent = text || "";
+  el.className = "msg" + (kind ? " " + kind : "");
+}
+
+function render(status) {
+  const cur = status.current_creator;
+  const count = status.count;
+
+  $("maxRows").textContent = status.max_rows;
+  $("countNow").textContent = count;
+
+  // progress pips
+  const prog = $("progress");
+  prog.innerHTML = "";
+  for (let i = 1; i <= status.max_rows; i++) {
+    const pip = document.createElement("div");
+    pip.className = "pip" + (i <= count ? " done" : "") + (i > status.min_rows && i > count ? " locked" : "");
+    prog.appendChild(pip);
+  }
+
+  if (cur) {
+    $("creatorLabel").textContent = cur;
+  } else {
+    $("creatorLabel").textContent = "No creator yet";
+  }
+
+  // Rule hint
+  let hint = "";
+  if (!cur) {
+    hint = "Start by adding your first creator below.";
+  } else if (count >= status.max_rows) {
+    hint = `✅ '${cur}' is full (${status.max_rows} rows). Add another creator to continue.`;
+  } else if (count >= status.min_rows) {
+    hint = `You can keep adding rows (up to ${status.max_rows}), or add another creator now.`;
+  } else {
+    const left = status.remaining_to_min;
+    hint = `Add ${left} more row${left === 1 ? "" : "s"} to unlock "Add another creator" (minimum ${status.min_rows}).`;
+  }
+  $("ruleHint").textContent = hint;
+
+  // Which cards/buttons show
+  // Creator card is shown only when we are between creators (no current creator).
+  $("creatorCard").classList.toggle("hidden", !!cur);
+  $("rowCard").classList.toggle("hidden", !cur);
+
+  // Save row button
+  $("saveRowBtn").disabled = !status.can_add_row;
+  $("saveRowBtn").textContent = status.can_add_row ? "💾 Save row" : "🔒 Creator is full";
+
+  // Add another creator button (inside row card)
+  const addBtn = $("addCreatorBtn");
+  addBtn.classList.toggle("hidden", !status.can_add_creator);
+
+  // Creators summary
+  const list = $("creatorsList");
+  list.innerHTML = "";
+  if (!status.creators.length) {
+    list.innerHTML = '<div class="hint">Nothing saved yet.</div>';
+  } else {
+    status.creators.forEach((c) => {
+      const item = document.createElement("div");
+      item.className = "creator-item";
+      const full = c.count >= status.max_rows ? '<span class="full-tag">full</span>' : "";
+      item.innerHTML = `<span>${escapeHtml(c.name)}</span><span class="num">${c.count} row${c.count === 1 ? "" : "s"} ${full}</span>`;
+      list.appendChild(item);
+    });
+  }
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+}
+
+async function refresh() {
+  const status = await api("/api/status");
+  render(status);
+}
+
+async function setCreator() {
+  const name = $("creatorInput").value.trim();
+  if (!name) { $("creatorHint").textContent = "Please type a name."; return; }
+  const r = await api("/api/creator", "POST", { name });
+  if (r.ok) {
+    $("creatorInput").value = "";
+    $("creatorHint").textContent = "";
+    setMsg("Creator '" + name + "' started. Add their first row.", "ok");
+    render(r.status);
+  } else {
+    $("creatorHint").textContent = r.error || "Could not add creator.";
+  }
+}
+
+async function saveRow() {
+  const topic = $("topic").value.trim();
+  const hook = $("hook").value.trim();
+  const transcribe = $("transcribe").value.trim();
+  const r = await api("/api/row", "POST", { topic, hook, transcribe });
+  if (r.ok) {
+    $("topic").value = "";
+    $("hook").value = "";
+    $("transcribe").value = "";
+    updateWordCount();
+    setMsg("Saved to data.csv ✔", "ok");
+    render(r.status);
+  } else {
+    setMsg(r.error || "Could not save.", "err");
+  }
+}
+
+// Show the creator input again so the user can type a new name.
+function showAddCreator() {
+  // Temporarily reveal the creator card by clearing the current creator on the UI side only.
+  $("creatorCard").classList.remove("hidden");
+  $("rowCard").classList.add("hidden");
+  $("creatorInput").focus();
+  setMsg("", "");
+}
+
+function updateWordCount() {
+  const t = $("transcribe").value.trim();
+  const words = t ? t.split(/\s+/).length : 0;
+  $("wordCount").textContent = words;
+}
+
+$("setCreatorBtn").addEventListener("click", setCreator);
+$("saveRowBtn").addEventListener("click", saveRow);
+$("addCreatorBtn").addEventListener("click", showAddCreator);
+$("transcribe").addEventListener("input", updateWordCount);
+$("creatorInput").addEventListener("keydown", (e) => { if (e.key === "Enter") setCreator(); });
+
+refresh();
+</script>
+</body>
+</html>

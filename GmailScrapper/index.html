@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI News Digest</title>
+<style>
+  :root{
+    --bg:#0d0f13; --bg2:#0a0c0f; --card:#151920; --card2:#1a1f28;
+    --edge:#232936; --edge2:#2c3444; --text:#e8ebf2; --text2:#c3c9d6;
+    --muted:#8a92a6; --faint:#5f6778;
+    --accent:#5b9dff; --accent2:#8ab4ff;
+    --ai:#9be7a6; --aibg:rgba(60,140,80,.14); --aiedge:#2f6b3a;
+    --hot:#ffd166; --shadow:0 1px 0 rgba(255,255,255,.02),0 8px 24px rgba(0,0,0,.35);
+    --r:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{
+    background:radial-gradient(1200px 600px at 50% -200px,#141a24 0,var(--bg) 60%) fixed,var(--bg);
+    color:var(--text);
+    font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+
+  /* ---- top bar ---- */
+  header{position:sticky;top:0;z-index:20;background:rgba(13,15,19,.82);
+    backdrop-filter:saturate(140%) blur(10px);border-bottom:1px solid var(--edge);}
+  .bar{max-width:820px;margin:0 auto;padding:12px 20px;display:flex;gap:14px;
+    align-items:center;flex-wrap:wrap;}
+  .brand{font-size:16px;font-weight:700;letter-spacing:.2px;display:flex;gap:8px;align-items:center;}
+  .ro{font-size:10.5px;color:var(--ai);border:1px solid var(--aiedge);
+    padding:2px 8px;border-radius:20px;font-weight:600;letter-spacing:.3px;}
+  .search{margin-left:auto;flex:1;min-width:180px;max-width:360px;position:relative;}
+  .search input{width:100%;background:var(--card);border:1px solid var(--edge2);
+    color:var(--text);border-radius:10px;padding:8px 12px 8px 32px;font-size:13.5px;outline:none;}
+  .search input:focus{border-color:var(--accent);}
+  .search::before{content:"🔍";position:absolute;left:10px;top:7px;font-size:12px;opacity:.6;}
+
+  /* ---- toolbar ---- */
+  .tools{max-width:820px;margin:0 auto;padding:10px 20px;display:flex;gap:16px;
+    align-items:center;flex-wrap:wrap;font-size:12.5px;color:var(--muted);}
+  .tabs{display:flex;background:var(--card);border:1px solid var(--edge2);
+    border-radius:10px;overflow:hidden;}
+  .tab{padding:6px 14px;cursor:pointer;color:var(--muted);font-weight:600;font-size:12.5px;
+    border:none;background:none;}
+  .tab.active{background:var(--accent);color:#06101f;}
+  select,.chk{background:var(--card);border:1px solid var(--edge2);color:var(--text2);
+    border-radius:8px;padding:5px 8px;font-size:12.5px;outline:none;}
+  label.inline{display:flex;gap:6px;align-items:center;cursor:pointer;}
+  input[type=range]{accent-color:var(--accent);vertical-align:middle;width:110px;}
+  .stat{margin-left:auto;color:var(--faint);font-size:12px;}
+  .stat b{color:var(--text2);}
+
+  /* ---- feed ---- */
+  main{max-width:820px;margin:0 auto;padding:16px 20px 80px;}
+  .story{position:relative;display:flex;gap:14px;padding:16px 16px 16px 14px;
+    background:var(--card);border:1px solid var(--edge);border-radius:var(--r);
+    margin-bottom:12px;box-shadow:var(--shadow);transition:border-color .12s,transform .06s;}
+  .story:hover{border-color:var(--edge2);}
+  .story.sel{border-color:var(--accent);}
+  .story.seen{opacity:.42;}
+  .rail{width:4px;border-radius:4px;flex:none;background:linear-gradient(var(--aiedge),transparent);}
+  .body{flex:1;min-width:0;}
+  .title{font-size:15.5px;font-weight:650;line-height:1.35;color:var(--text);
+    text-decoration:none;display:inline;}
+  .title:hover{text-decoration:underline;text-decoration-color:var(--accent);}
+  .meta{margin-top:5px;font-size:12px;color:var(--muted);display:flex;gap:8px;
+    align-items:center;flex-wrap:wrap;}
+  .src{color:var(--accent2);font-weight:600;}
+  .dot{color:var(--faint);}
+  .dupe{color:var(--faint);border:1px solid var(--edge2);border-radius:20px;padding:0 7px;font-size:11px;}
+  .chips{margin-top:8px;display:flex;gap:5px;flex-wrap:wrap;}
+  .chip{font-size:10.5px;color:var(--ai);background:var(--aibg);border:1px solid var(--aiedge);
+    border-radius:20px;padding:1px 8px;line-height:16px;}
+  .right{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+  .score{font-variant-numeric:tabular-nums;font-size:12px;font-weight:700;color:#06101f;
+    background:var(--ai);border-radius:8px;padding:2px 8px;min-width:42px;text-align:center;}
+  .score.mid{background:#d9e88f;} .score.low{background:#8a92a6;color:#0d0f13;}
+  .seenbtn{background:transparent;border:1px solid var(--edge2);color:var(--muted);
+    font-size:11px;border-radius:8px;padding:3px 9px;cursor:pointer;white-space:nowrap;}
+  .seenbtn:hover{color:var(--text);border-color:var(--faint);}
+  .story.seen .seenbtn{color:var(--ai);border-color:var(--aiedge);}
+
+  /* ---- grouped view ---- */
+  .group{background:var(--card);border:1px solid var(--edge);border-radius:var(--r);
+    margin-bottom:14px;overflow:hidden;box-shadow:var(--shadow);}
+  .ghead{padding:14px 16px;border-bottom:1px solid var(--edge);display:flex;gap:8px;
+    align-items:baseline;flex-wrap:wrap;}
+  .gsubject{font-weight:650;font-size:14.5px;}
+  .gsrc{color:var(--muted);font-size:12px;}
+  .gcount{font-size:11.5px;color:var(--ai);}
+  .gcount.zero{color:var(--faint);}
+  .gdate{margin-left:auto;color:var(--faint);font-size:11.5px;white-space:nowrap;}
+  .glist{list-style:none;margin:0;padding:0;}
+  .glink{padding:11px 16px;border-bottom:1px solid #1b1f28;display:flex;gap:12px;align-items:flex-start;}
+  .glink:last-child{border-bottom:none;}
+  .glink.ai{background:rgba(60,140,80,.06);}
+  .glink.seen{opacity:.4;}
+  .otoggle{padding:10px 16px;color:var(--muted);font-size:12.5px;cursor:pointer;user-select:none;}
+  .otoggle:hover{color:var(--text);}
+  .other{display:none;} .other.open{display:block;}
+  .glink.other a{color:var(--muted);}
+
+  .empty{color:var(--muted);text-align:center;padding:70px 16px;}
+  .empty code{background:var(--card2);padding:2px 6px;border-radius:6px;color:var(--text2);}
+  kbd{background:var(--card2);border:1px solid var(--edge2);border-bottom-width:2px;
+    border-radius:5px;padding:0 5px;font-size:11px;color:var(--text2);font-family:inherit;}
+  .hint{max-width:820px;margin:0 auto;padding:0 20px 12px;color:var(--faint);font-size:11.5px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <span class="brand">📥 AI News Digest</span>
+    <span class="ro">READ-ONLY</span>
+    <div class="search"><input id="q" type="search" placeholder="Search stories, sources, keywords…" autocomplete="off"></div>
+  </div>
+  <div class="tools">
+    <div class="tabs">
+      <button class="tab active" data-view="feed">Top Stories</button>
+      <button class="tab" data-view="grouped">By Newsletter</button>
+    </div>
+    <select id="sort" title="Sort order">
+      <option value="relevance">Sort: Relevance</option>
+      <option value="newest">Sort: Newest</option>
+    </select>
+    <select id="source" title="Filter by newsletter"><option value="all">All sources</option></select>
+    <label class="inline">min score <b id="minv" style="color:var(--text2)">0.00</b>
+      <input id="minrel" type="range" min="0" max="1" step="0.05" value="0"></label>
+    <label class="inline"><input type="checkbox" id="hideseen"> hide seen</label>
+    <span class="stat" id="stat"></span>
+  </div>
+</header>
+<div class="hint" id="hint"><kbd>j</kbd>/<kbd>k</kbd> move · <kbd>o</kbd> open · <kbd>s</kbd> seen · <kbd>/</kbd> search</div>
+<main id="root"><div class="empty">Loading…</div></main>
+
+<script>
+const FILLERS = new Set(["read more","read","more","said","here","click","link","said.","launched","finished","revealed","crossed","this","view","open","learn more","see more","continue reading"]);
+const state = Object.assign(
+  {view:"feed", sort:"relevance", minRel:0, hideSeen:false, q:"", source:"all"},
+  JSON.parse(localStorage.getItem("digest.state")||"{}")
+);
+let DATA = [], ITEMS = [], selIdx = -1;
+
+function save(){ localStorage.setItem("digest.state", JSON.stringify(state)); }
+function host(u){ try{return new URL(u).host.replace(/^www\./,"");}catch(e){return "";} }
+function senderName(s){ if(!s) return "Unknown";
+  const m=s.match(/^\s*"?([^"<]+?)"?\s*</); return (m?m[1]:s).trim().replace(/@.*$/,""); }
+function relTime(sec){ if(!sec) return "";
+  const d=(Date.now()/1000)-sec;
+  if(d<3600) return Math.max(1,Math.round(d/60))+"m ago";
+  if(d<86400) return Math.round(d/3600)+"h ago";
+  if(d<172800) return "yesterday";
+  if(d<604800) return Math.round(d/86400)+"d ago";
+  return new Date(sec*1000).toLocaleDateString(undefined,{month:"short",day:"numeric"}); }
+function displayTitle(l){
+  const a=(l.anchor_text||"").trim();
+  if(a && a.length>=3 && !FILLERS.has(a.toLowerCase())) return a;
+  return a || host(l.url) || l.url;
+}
+function scoreClass(s){ return s>=0.75?"":(s>=0.45?"mid":"low"); }
+function norm(t){ return (t||"").toLowerCase().replace(/[^a-z0-9 ]/g,"").replace(/\s+/g," ").trim(); }
+
+async function load(){
+  DATA = await (await fetch("/api/digest")).json();
+  buildSources();
+  applyControlsToUI();
+  render();
+}
+
+function buildSources(){
+  const set=new Map();
+  DATA.forEach(m=>{ const n=senderName(m.sender); set.set(n,(set.get(n)||0)+ (m.ai_count||0)); });
+  const sel=document.getElementById("source");
+  sel.innerHTML='<option value="all">All sources</option>';
+  [...set.keys()].sort((a,b)=>a.localeCompare(b)).forEach(n=>{
+    const o=document.createElement("option"); o.value=n; o.textContent=n; sel.appendChild(o); });
+}
+
+/* flatten all flagged links into feed items, attaching newsletter context */
+function feedItems(){
+  const items=[];
+  for(const m of DATA){
+    const src=senderName(m.sender);
+    for(const l of m.links){
+      if(!l.is_ai) continue;
+      items.push({...l, source:src, subject:m.subject, received_at:m.received_at, msg_id:m.id});
+    }
+  }
+  return items;
+}
+
+/* collapse duplicates: same URL, or same long normalized title */
+function dedupe(items){
+  const byKey=new Map();
+  for(const it of items){
+    const t=norm(displayTitle(it));
+    const key = (t.length>=20) ? ("t:"+t) : ("u:"+it.url.toLowerCase());
+    const ex=byKey.get(key);
+    if(!ex){ byKey.set(key,{...it, sources:new Set([it.source]), _seenAll:!!it.seen, dupIds:[it.id]}); }
+    else{
+      ex.sources.add(it.source);
+      ex.dupIds.push(it.id);
+      ex._seenAll = ex._seenAll && !!it.seen;
+      if(it.score>ex.score){ ex.score=it.score; ex.url=it.url; ex.matched=it.matched;
+        ex.anchor_text=it.anchor_text; ex.id=it.id; ex.received_at=it.received_at; ex.msg_id=it.msg_id; }
+      if((it.received_at||0)>(ex.received_at||0)) ex.received_at=it.received_at;
+    }
+  }
+  return [...byKey.values()];
+}
+
+function passFilters(title, src, matched, score, seen){
+  if(score < state.minRel) return false;
+  if(state.hideSeen && seen) return false;
+  if(state.source!=="all" && src!==state.source) return false;
+  if(state.q){
+    const hay=(title+" "+src+" "+(matched||"")).toLowerCase();
+    if(!hay.includes(state.q.toLowerCase())) return false;
+  }
+  return true;
+}
+
+function sortItems(items){
+  const byRel=(a,b)=> b.score-a.score || (b.received_at||0)-(a.received_at||0);
+  const byNew=(a,b)=> (b.received_at||0)-(a.received_at||0) || b.score-a.score;
+  return items.sort(state.sort==="newest"?byNew:byRel);
+}
+
+async function toggleSeen(item, seenNow){
+  const ids = item.dupIds || [item.id];
+  await Promise.all(ids.map(id=>fetch("/api/seen",{method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({link_id:id, seen:seenNow})})));
+  // update local DATA
+  const idset=new Set(ids);
+  DATA.forEach(m=>m.links.forEach(l=>{ if(idset.has(l.id)) l.seen=seenNow?1:0; }));
+  render();
+}
+
+function chipEls(matched){
+  const wrap=document.createElement("div"); wrap.className="chips";
+  (matched||"").split(",").map(s=>s.trim()).filter(Boolean).slice(0,6).forEach(k=>{
+    const c=document.createElement("span"); c.className="chip"; c.textContent=k; wrap.appendChild(c); });
+  return wrap;
+}
+
+function renderFeed(root){
+  let items = dedupe(feedItems());
+  items = items.filter(it=>passFilters(displayTitle(it), it.source, it.matched, it.score, it._seenAll));
+  items = sortItems(items);
+  ITEMS = items;
+
+  document.getElementById("stat").innerHTML =
+    `<b>${items.length}</b> stories · <b>${new Set(items.map(i=>i.source)).size}</b> sources`;
+
+  if(!items.length){ root.innerHTML='<div class="empty">No stories match. Loosen the filters, or run <code>python ingest.py</code>.</div>'; return; }
+
+  items.forEach((it,i)=>{
+    const card=document.createElement("article"); card.className="story"+(it._seenAll?" seen":"")+(i===selIdx?" sel":"");
+    card.dataset.i=i;
+    const rail=document.createElement("div"); rail.className="rail";
+    rail.style.background=`linear-gradient(var(--aiedge),transparent)`;
+    rail.style.opacity=String(0.35+0.65*it.score);
+    card.appendChild(rail);
+
+    const body=document.createElement("div"); body.className="body";
+    const a=document.createElement("a"); a.className="title"; a.href=it.url;
+    a.target="_blank"; a.rel="noopener noreferrer"; a.textContent=displayTitle(it);
+    body.appendChild(a);
+
+    const meta=document.createElement("div"); meta.className="meta";
+    const src=document.createElement("span"); src.className="src"; src.textContent=it.source; meta.appendChild(src);
+    meta.insertAdjacentHTML("beforeend",'<span class="dot">·</span>');
+    const tm=document.createElement("span"); tm.textContent=relTime(it.received_at); meta.appendChild(tm);
+    const h=host(it.url);
+    if(h){ meta.insertAdjacentHTML("beforeend",'<span class="dot">·</span>');
+      const hh=document.createElement("span"); hh.textContent=h; meta.appendChild(hh); }
+    if(it.sources.size>1){ const d=document.createElement("span"); d.className="dupe";
+      d.textContent="in "+it.sources.size+" newsletters"; meta.appendChild(d); }
+    body.appendChild(meta);
+    if(it.matched) body.appendChild(chipEls(it.matched));
+    card.appendChild(body);
+
+    const right=document.createElement("div"); right.className="right";
+    const sc=document.createElement("span"); sc.className="score "+scoreClass(it.score);
+    sc.textContent=it.score.toFixed(2); right.appendChild(sc);
+    const btn=document.createElement("button"); btn.className="seenbtn";
+    btn.textContent=it._seenAll?"seen ✓":"mark seen";
+    btn.onclick=()=>toggleSeen(it, !it._seenAll); right.appendChild(btn);
+    card.appendChild(right);
+
+    card.addEventListener("click",e=>{ if(e.target.tagName!=="A"&&e.target.tagName!=="BUTTON"){ selIdx=i; markSel(); } });
+    root.appendChild(card);
+  });
+}
+
+function glinkRow(l, other){
+  const li=document.createElement("li"); li.className="glink"+(l.is_ai?" ai":"")+(other?" other":"")+(l.seen?" seen":"");
+  if(l.is_ai){ const s=document.createElement("span"); s.className="score "+scoreClass(l.score);
+    s.textContent=Number(l.score).toFixed(2); li.appendChild(s); }
+  const w=document.createElement("div"); w.style.flex="1"; w.style.minWidth="0";
+  const a=document.createElement("a"); a.className="title"; a.style.fontSize="14px"; a.href=l.url;
+  a.target="_blank"; a.rel="noopener noreferrer"; a.textContent=displayTitle(l); w.appendChild(a);
+  const m=document.createElement("div"); m.className="meta"; m.textContent=host(l.url); w.appendChild(m);
+  if(l.is_ai && l.matched) w.appendChild(chipEls(l.matched));
+  li.appendChild(w);
+  const b=document.createElement("button"); b.className="seenbtn"; b.style.marginLeft="auto";
+  b.textContent=l.seen?"seen ✓":"mark seen"; b.onclick=()=>toggleSeen(l, !l.seen); li.appendChild(b);
+  return li;
+}
+
+function renderGrouped(root){
+  let msgs = DATA.map(m=>({...m})).sort((a,b)=>{
+    const ai=x=>x.links.filter(l=>l.is_ai);
+    const top=x=>Math.max(0,...ai(x).map(l=>l.score));
+    if(state.sort==="newest") return (b.received_at||0)-(a.received_at||0);
+    return top(b)-top(a) || ai(b).length-ai(a).length;
+  });
+  let shown=0, storyCount=0;
+  msgs.forEach(m=>{
+    const src=senderName(m.sender);
+    if(state.source!=="all" && src!==state.source) return;
+    const ai=m.links.filter(l=>l.is_ai && passFilters(displayTitle(l),src,l.matched,l.score,l.seen));
+    const other=m.links.filter(l=>!l.is_ai && !(state.hideSeen&&l.seen));
+    if(state.q && ai.length===0 && !((m.subject||"").toLowerCase().includes(state.q.toLowerCase()))) {
+      if(state.source==="all") return; // hide non-matching cards when searching
+    }
+    storyCount+=ai.length;
+    const g=document.createElement("div"); g.className="group";
+    const gh=document.createElement("div"); gh.className="ghead";
+    gh.innerHTML=`<span class="gsubject"></span><span class="gsrc"></span>`;
+    gh.querySelector(".gsubject").textContent=m.subject;
+    gh.querySelector(".gsrc").textContent=src;
+    const c=document.createElement("span"); c.className="gcount"+(ai.length?"":" zero");
+    c.textContent=ai.length?`${ai.length} tech/AI`:"no tech/AI links";
+    gh.appendChild(c);
+    const dt=document.createElement("span"); dt.className="gdate"; dt.textContent=relTime(m.received_at); gh.appendChild(dt);
+    g.appendChild(gh);
+    const ul=document.createElement("ul"); ul.className="glist";
+    ai.sort((a,b)=>b.score-a.score).forEach(l=>ul.appendChild(glinkRow(l,false)));
+    g.appendChild(ul);
+    if(other.length){
+      const tog=document.createElement("div"); tog.className="otoggle";
+      const lbl=n=>(n?"▾ ":"▸ ")+other.length+" other link"+(other.length>1?"s":"");
+      tog.textContent=lbl(false);
+      const ou=document.createElement("ul"); ou.className="glist other";
+      other.forEach(l=>ou.appendChild(glinkRow(l,true)));
+      tog.onclick=()=>{ou.classList.toggle("open"); tog.textContent=lbl(ou.classList.contains("open"));};
+      g.appendChild(tog); g.appendChild(ou);
+    }
+    root.appendChild(g); shown++;
+  });
+  document.getElementById("stat").innerHTML=`<b>${storyCount}</b> stories · <b>${shown}</b> newsletters`;
+  if(!shown) root.innerHTML='<div class="empty">No newsletters match. Run <code>python ingest.py</code> first.</div>';
+}
+
+function render(){
+  const root=document.getElementById("root"); root.innerHTML="";
+  document.getElementById("hint").style.display = state.view==="feed"?"block":"none";
+  if(state.view==="feed") renderFeed(root); else renderGrouped(root);
+}
+
+function markSel(){
+  document.querySelectorAll(".story").forEach(el=>el.classList.toggle("sel", +el.dataset.i===selIdx));
+  const el=document.querySelector(".story.sel");
+  if(el) el.scrollIntoView({block:"nearest",behavior:"smooth"});
+}
+
+/* ---- controls ---- */
+function applyControlsToUI(){
+  document.getElementById("sort").value=state.sort;
+  document.getElementById("minrel").value=state.minRel;
+  document.getElementById("minv").textContent=Number(state.minRel).toFixed(2);
+  document.getElementById("hideseen").checked=state.hideSeen;
+  document.getElementById("q").value=state.q;
+  const ssel=document.getElementById("source");
+  if([...ssel.options].some(o=>o.value===state.source)) ssel.value=state.source; else state.source="all";
+  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.dataset.view===state.view));
+}
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{ state.view=t.dataset.view;
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===t)); selIdx=-1; save(); render(); });
+document.getElementById("sort").onchange=e=>{state.sort=e.target.value; save(); render();};
+document.getElementById("source").onchange=e=>{state.source=e.target.value; save(); render();};
+document.getElementById("minrel").oninput=e=>{state.minRel=parseFloat(e.target.value);
+  document.getElementById("minv").textContent=state.minRel.toFixed(2); save(); render();};
+document.getElementById("hideseen").onchange=e=>{state.hideSeen=e.target.checked; save(); render();};
+document.getElementById("q").oninput=e=>{state.q=e.target.value; selIdx=-1; save(); render();};
+
+/* ---- keyboard ---- */
+document.addEventListener("keydown",e=>{
+  if(e.target.tagName==="INPUT"||e.target.tagName==="TEXTAREA"||e.target.tagName==="SELECT"){
+    if(e.key==="Escape") e.target.blur(); return; }
+  if(e.key==="/"){ e.preventDefault(); document.getElementById("q").focus(); return; }
+  if(state.view!=="feed") return;
+  if(e.key==="j"||e.key==="k"){
+    selIdx=Math.max(0,Math.min(ITEMS.length-1, selIdx+(e.key==="j"?1:-1))); markSel(); }
+  else if(e.key==="o"||e.key==="Enter"){ const it=ITEMS[selIdx];
+    if(it) window.open(it.url,"_blank","noopener"); }
+  else if(e.key==="s"){ const it=ITEMS[selIdx]; if(it) toggleSeen(it, !it._seenAll); }
+});
+
+load();
+</script>
+</body>
+</html>
